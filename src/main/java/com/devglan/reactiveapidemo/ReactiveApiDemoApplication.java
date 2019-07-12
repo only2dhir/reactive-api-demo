@@ -11,22 +11,24 @@ import reactor.core.publisher.Flux;
 @SpringBootApplication
 public class ReactiveApiDemoApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ReactiveApiDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ReactiveApiDemoApplication.class, args);
+    }
 
-	@Bean
-	CommandLineRunner run(UserRepository userRepository){
-		return args -> {
-			Flux<User> users = Flux.just(
-					new User("Dhiraj", 23, 3456),
-					new User("Mike", 34, 3421),
-					new User("Hary", 21, 8974))
-					.flatMap(userRepository :: save);
+    @Bean
+    CommandLineRunner run(UserRepository userRepository) {
+        return args -> {
+            userRepository.deleteAll()
+                    .thenMany(Flux.just(
+                            new User("Dhiraj", 23, 3456),
+                            new User("Mike", 34, 3421),
+                            new User("Hary", 21, 8974)
+                    )
+                            .flatMap(userRepository::save))
+                    .thenMany(userRepository.findAll())
+                    .subscribe(System.out::println);
 
-			users.thenMany(userRepository.findAll())
-					.subscribe(System.out :: println);
-		};
-	}
+        };
+    }
 
 }
