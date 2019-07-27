@@ -12,8 +12,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 
-@RestController
-@RequestMapping("/users")
+//@RestController
+//@RequestMapping("/users")
 public class UserController {
 
     @Autowired
